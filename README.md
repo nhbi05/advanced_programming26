@@ -6,9 +6,9 @@ Housing staff allocate students to hostel rooms and cancel those allocations.
 ## Layers
 
 - `domain`: aggregates, entities, value objects, domain services, domain events and repository contracts
-- `application`: use cases (application services), DTOs and domain event handlers
+- `application`: use cases (application services), DTOs, domain event handlers and the user-facing error wording (`error_messages.py`)
 - `infrastructure`: in-memory repository implementations
-- `interface`: the minimal command-line entry point
+- `interface`: the composition root (`composition.py`, wiring only) and the minimal command-line demo (`cli.py`)
 
 Dependencies point inward: interface and infrastructure depend on application/domain, while domain depends on no framework.
 

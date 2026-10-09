@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from hostel_allocation.domain.errors import BlankIdentifier
+
 
 @dataclass(frozen=True, slots=True)
 class AllocationNumber:
@@ -21,7 +23,7 @@ class AllocationNumber:
         """Protect the rule that an allocation number must carry real text."""
 
         if not self.value.strip():
-            raise ValueError("An allocation number cannot be blank.")
+            raise BlankIdentifier("allocation number")
 
     def __str__(self) -> str:
         return self.value

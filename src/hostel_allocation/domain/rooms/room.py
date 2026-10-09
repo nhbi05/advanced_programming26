@@ -9,6 +9,7 @@ only the identifier, so the two aggregates stay decoupled.
 from __future__ import annotations
 
 from hostel_allocation.domain.allocations.value_objects import AllocationNumber
+from hostel_allocation.domain.rooms.errors import AlreadyOccupying, NotAnOccupant, RoomFull
 from hostel_allocation.domain.rooms.value_objects import Capacity, RoomNumber
 
 
@@ -42,20 +43,15 @@ class Room:
     def add_occupant(self, allocation_number: AllocationNumber) -> None:
         """Record a new occupant, enforcing BR3.
 
-        Raises ``ValueError`` when the room is already at capacity, leaving
+        Raises ``RoomFull`` when the room is already at capacity, leaving
         its occupants unchanged.
         """
 
         if allocation_number in self._occupants:
-            raise ValueError(
-                f"Allocation {allocation_number} already occupies room {self._room_number}."
-            )
+            raise AlreadyOccupying(self._room_number, allocation_number)
 
         if not self.has_available_capacity():
-            raise ValueError(
-                f"Room {self._room_number} is already at full capacity of "
-                f"{self._capacity}."
-            )
+            raise RoomFull(self._room_number, self._capacity)
 
         self._occupants.add(allocation_number)
 
@@ -67,9 +63,6 @@ class Room:
         """
 
         if allocation_number not in self._occupants:
-            raise ValueError(
-                f"Room {self._room_number} does not have allocation "
-                f"{allocation_number} as an occupant."
-            )
+            raise NotAnOccupant(self._room_number, allocation_number)
 
         self._occupants.discard(allocation_number)

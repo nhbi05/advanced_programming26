@@ -19,5 +19,5 @@ class RoomRepository(ABC):
     def get(self, room_number: RoomNumber) -> Room:
         """Return the room with this number.
 
-        Raises ``ValueError`` when no such room exists.
+        Raises ``RoomNotFound`` when no such room exists.
         """

@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from hostel_allocation.domain.allocations.errors import InvalidAcademicYear
+
 
 @dataclass(frozen=True, slots=True)
 class AcademicYear:
@@ -25,9 +27,10 @@ class AcademicYear:
         """Protect the rule that every AcademicYear must be BR1-valid."""
 
         if self.end_year != self.start_year + 1:
-            raise ValueError(
+            raise InvalidAcademicYear(
+                f"{self.start_year}/{self.end_year}",
                 "An academic year must span two consecutive years, "
-                f"but got {self.start_year}/{self.end_year}."
+                f"but got {self.start_year}/{self.end_year}.",
             )
 
     @classmethod
@@ -36,8 +39,8 @@ class AcademicYear:
 
         parts = text.split("/")
         if len(parts) != 2 or not all(part.isdigit() for part in parts):
-            raise ValueError(
-                f'An academic year must look like "2025/2026", but got "{text}".'
+            raise InvalidAcademicYear(
+                text, f'An academic year must look like "2025/2026", but got "{text}".'
             )
 
         start_year, end_year = (int(part) for part in parts)

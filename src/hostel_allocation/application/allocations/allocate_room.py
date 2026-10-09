@@ -12,10 +12,12 @@ from hostel_allocation.application.allocations.dtos import (
     AllocateRoomRequest,
     AllocateRoomResponse,
 )
+from hostel_allocation.application.error_messages import describe
 from hostel_allocation.domain.allocations.allocation import Allocation
 from hostel_allocation.domain.allocations.repositories import AllocationRepository
 from hostel_allocation.domain.allocations.services import AllocationEligibilityService
 from hostel_allocation.domain.allocations.value_objects import AcademicYear, AllocationNumber, StudentId
+from hostel_allocation.domain.errors import DomainError
 from hostel_allocation.domain.rooms.repositories import RoomRepository
 from hostel_allocation.domain.rooms.value_objects import RoomNumber
 
@@ -50,8 +52,8 @@ class AllocateRoomService:
 
             self._allocation_repository.save(allocation)
             self._room_repository.save(room)
-        except ValueError as error:
-            return AllocateRoomResponse(success=False, message=str(error))
+        except DomainError as error:
+            return AllocateRoomResponse(success=False, message=describe(error))
 
         return AllocateRoomResponse(
             success=True,

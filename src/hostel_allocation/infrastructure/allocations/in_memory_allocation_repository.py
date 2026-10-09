@@ -8,6 +8,7 @@ composition root (interface/cli.py).
 from __future__ import annotations
 
 from hostel_allocation.domain.allocations.allocation import Allocation
+from hostel_allocation.domain.allocations.errors import AllocationNotFound
 from hostel_allocation.domain.allocations.repositories import AllocationRepository
 from hostel_allocation.domain.allocations.value_objects import AllocationNumber, StudentId
 
@@ -23,7 +24,7 @@ class InMemoryAllocationRepository(AllocationRepository):
         try:
             return self._allocations[allocation_number]
         except KeyError as error:
-            raise ValueError(f"Allocation {allocation_number} was not found.") from error
+            raise AllocationNotFound(allocation_number) from error
 
     def has_active_allocation_for(self, student_id: StudentId) -> bool:
         return any(

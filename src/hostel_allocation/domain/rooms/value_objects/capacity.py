@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from hostel_allocation.domain.rooms.errors import InvalidCapacity
+
 # This named constant communicates a domain fact and avoids a magic number.
 MAXIMUM_OCCUPANTS_PER_ROOM = 8
 
@@ -18,10 +20,7 @@ class Capacity:
         """Protect the rule that a capacity must be a sane, positive number."""
 
         if not (1 <= self.value <= MAXIMUM_OCCUPANTS_PER_ROOM):
-            raise ValueError(
-                "A room's capacity must be between 1 and "
-                f"{MAXIMUM_OCCUPANTS_PER_ROOM}, but got {self.value}."
-            )
+            raise InvalidCapacity(self.value, MAXIMUM_OCCUPANTS_PER_ROOM)
 
     def __int__(self) -> int:
         return self.value

@@ -8,8 +8,10 @@ own capacity. Neither Allocation nor Room could answer this alone.
 
 from __future__ import annotations
 
+from hostel_allocation.domain.allocations.errors import StudentAlreadyAllocated
 from hostel_allocation.domain.allocations.repositories import AllocationRepository
 from hostel_allocation.domain.allocations.value_objects import StudentId
+from hostel_allocation.domain.rooms.errors import RoomFull
 from hostel_allocation.domain.rooms.room import Room
 
 
@@ -20,16 +22,14 @@ class AllocationEligibilityService:
         self._allocation_repository = allocation_repository
 
     def check(self, student_id: StudentId, room: Room) -> None:
-        """Raise ``ValueError`` when the student or the room is not eligible.
+        """Raise a ``DomainError`` when the student or the room is not eligible.
 
         This only asks Room a question (``has_available_capacity``); it
         never inspects or duplicates Room's own BR3 invariant.
         """
 
         if self._allocation_repository.has_active_allocation_for(student_id):
-            raise ValueError(
-                f"Student {student_id} already has an active allocation."
-            )
+            raise StudentAlreadyAllocated(student_id)
 
         if not room.has_available_capacity():
-            raise ValueError(f"Room {room.room_number} has no available capacity.")
+            raise RoomFull(room.room_number, room.capacity)

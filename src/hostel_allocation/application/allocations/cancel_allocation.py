@@ -11,9 +11,11 @@ from hostel_allocation.application.allocations.dtos import (
     CancelAllocationRequest,
     CancelAllocationResponse,
 )
+from hostel_allocation.application.error_messages import describe
 from hostel_allocation.application.event_dispatcher import EventDispatcher
 from hostel_allocation.domain.allocations.repositories import AllocationRepository
 from hostel_allocation.domain.allocations.value_objects import AllocationNumber
+from hostel_allocation.domain.errors import DomainError
 
 
 class CancelAllocationService:
@@ -34,8 +36,8 @@ class CancelAllocationService:
             )
             allocation.cancel()  # BR2, raises AllocationCancelled internally
             self._allocation_repository.save(allocation)
-        except ValueError as error:
-            return CancelAllocationResponse(success=False, message=str(error))
+        except DomainError as error:
+            return CancelAllocationResponse(success=False, message=describe(error))
 
         for event in allocation.pull_pending_events():
             self._event_dispatcher.dispatch(event)  # BR5

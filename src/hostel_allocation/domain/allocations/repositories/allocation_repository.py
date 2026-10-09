@@ -23,7 +23,7 @@ class AllocationRepository(ABC):
     def get(self, allocation_number: AllocationNumber) -> Allocation:
         """Return the allocation with this number.
 
-        Raises ``ValueError`` when no such allocation exists -- this is the
+        Raises ``AllocationNotFound`` when no such allocation exists -- this is the
         check housing staff rely on before cancelling an allocation (BR6).
         """
 

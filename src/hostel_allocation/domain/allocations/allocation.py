@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from hostel_allocation.domain.allocations.errors import AllocationAlreadyCancelled
 from hostel_allocation.domain.allocations.events import AllocationCancelled
 from hostel_allocation.domain.allocations.value_objects import (
     AcademicYear,
@@ -74,14 +75,12 @@ class Allocation:
     def cancel(self) -> None:
         """Move this allocation to Cancelled, enforcing BR2.
 
-        Raises ``ValueError`` when the allocation has already been cancelled,
+        Raises ``AllocationAlreadyCancelled`` when the allocation has already been cancelled,
         leaving its state unchanged.
         """
 
         if self._status is AllocationStatus.CANCELLED:
-            raise ValueError(
-                f"Allocation {self._allocation_number} has already been cancelled."
-            )
+            raise AllocationAlreadyCancelled(self._allocation_number)
 
         self._status = AllocationStatus.CANCELLED
         self._pending_events.append(
